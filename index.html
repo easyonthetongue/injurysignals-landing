@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>InjurySignals — Find workplace injury cases before anyone else</title>
+  <meta name="description" content="Real-time intelligence on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities." />
+  <meta property="og:title" content="InjurySignals" />
+  <meta property="og:description" content="Real-time intelligence on workplace incidents, fines, and safety violations — mapped to law-firm opportunities." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27black%27/%3E%3C/svg%3E">
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --fg:#0a0a0a;
+      --muted:#6a6a6a;
+      --line:#eaeaea;
+      --accent:#000000; /* strict black-on-white aesthetic */
+      --radius:12px;
+      --maxw:1120px;
+      --pad:20px;
+    }
+
+    /* Base */
+    html,body{background:var(--bg); color:var(--fg); margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+    *{box-sizing:border-box}
+    a{color:var(--fg); text-decoration:none}
+    .container{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad)}
+    .grid{display:grid; gap:20px}
+    .muted{color:var(--muted)}
+    .eyebrow{letter-spacing:.12em; text-transform:uppercase; font-size:.76rem; color:var(--muted)}
+    .section{padding:80px 0; border-top:1px solid var(--line)}
+    .button{display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 18px; border:1px solid var(--fg); border-radius:999px; font-weight:600; transition:transform .1s ease, background .15s ease}
+    .button:hover{transform:translateY(-1px); background:#111; color:#fff}
+    .button.primary{background:#111; color:#fff}
+    .button.primary:hover{transform:translateY(-1px); background:#000}
+    .subtle{opacity:.85}
+
+    /* Header */
+    header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter:saturate(180%) blur(8px); border-bottom:1px solid var(--line)}
+    .nav{height:64px; display:flex; align-items:center; justify-content:space-between}
+    .brand{display:flex; gap:10px; align-items:center; font-weight:700}
+    .brand-dot{width:10px; height:10px; background:#000; border-radius:50%}
+    .nav a{font-size:.95rem}
+    .nav-cta{display:flex; gap:10px; align-items:center}
+
+    /* Hero */
+    .hero{padding:96px 0 40px}
+    .hero h1{font-size:clamp(32px, 6vw, 52px); line-height:1.06; letter-spacing:-.02em; margin:0 0 16px}
+    .hero p{font-size:clamp(16px,2.2vw,20px); color:#111; opacity:.9; max-width:720px}
+    .hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+
+    /* Ticker */
+    .ticker-wrap{margin-top:28px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+    .ticker{display:flex; gap:20px; padding:14px 18px; white-space:nowrap; animation:ticker 24s linear infinite}
+    .tick{display:inline-flex; gap:10px; align-items:center; padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:#fff}
+    .dot{width:6px; height:6px; background:#000; border-radius:50%; animation:pulse 1.6s ease-in-out infinite}
+    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+    @keyframes pulse{0%,100%{opacity:.2} 50%{opacity:1}}
+
+    @media (prefers-reduced-motion: reduce){
+      .ticker{animation:none}
+      .dot{animation:none}
+    }
+
+    /* Product preview cards */
+    .cards{grid-template-columns:repeat(12,1fr)}
+    .card{
+      grid-column:span 12;
+      border:1px solid var(--line); border-radius:var(--radius); padding:20px; background:#fff;
+    }
+    .card h3{margin:0 0 8px; font-size:18px}
+    .card p{margin:0; color:var(--muted); font-size:14px}
+    .card .frame{
+      margin-top:14px; border:1px dashed var(--line); border-radius:10px; padding:12px; background:#fff;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; font-size:13px;
+    }
+    @media (min-width:880px){
+      .card.span-6{grid-column:span 6}
+      .card.span-4{grid-column:span 4}
+    }
+
+    /* Logo row */
+    .logos{display:flex; gap:28px; flex-wrap:wrap; align-items:center}
+    .logo-pill{
+      border:1px solid var(--line); border-radius:999px; padding:10px 14px; font-size:13px; color:var(--muted); background:#fff;
+    }
+
+    /* Two-column sections */
+    .two-col{display:grid; gap:28px}
+    @media (min-width:920px){ .two-col{grid-template-columns:1.2fr 1fr} }
+
+    /* Checklist */
+    .check{display:flex; gap:12px; align-items:flex-start}
+    .check .box{width:18px; height:18px; border:1px solid #111; border-radius:4px; display:inline-block; margin-top:3px; position:relative}
+    .check .box::after{content:""; position:absolute; inset:3px; background:#111; transform:scale(.0); transition:transform .15s ease}
+    .check:hover .box::after{transform:scale(1)}
+
+    /* Case flow */
+    .flow{display:flex; gap:12px; flex-wrap:wrap}
+    .flow .node{padding:10px 14px; border:1px solid var(--line); border-radius:999px; font-size:14px}
+    .flow .arrow{align-self:center; opacity:.5}
+
+    /* Pricing */
+    .price{
+      border:1px solid var(--line); border-radius:var(--radius); padding:22px; display:grid; gap:8px; background:#fff;
+    }
+    .price .tag{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+    .price .num{font-size:28px; font-weight:700}
+    .stack{display:flex; gap:8px; flex-wrap:wrap}
+    .fine{font-size:12px; color:var(--muted)}
+
+    /* Footer */
+    footer{padding:60px 0; border-top:1px solid var(--line)}
+    .foot{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .foot small{color:var(--muted)}
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#">
+        <span class="brand-dot" aria-hidden="true"></span>
+        InjurySignals
+      </a>
+      <nav class="nav-cta" aria-label="primary">
+        <a href="#live" class="button subtle">View Live Signals</a>
+        <a href="#access" class="button primary">Request Access</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="container hero" id="top">
+    <span class="eyebrow">Legal Intelligence</span>
+    <h1>Find workplace injury cases before anyone else.</h1>
+    <p>Real-time alerts on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities. Filter by state, industry, severity, and act while the window is still open.</p>
+    <div class="hero-cta">
+      <a href="#access" class="button primary">Book a Demo</a>
+      <a href="#product" class="button">Preview the Dashboard</a>
+    </div>
+
+    <!-- Ticker -->
+    <div class="ticker-wrap" aria-label="recent signals">
+      <div class="ticker" id="ticker">
+        <!-- duplicated sequence for seamless loop; JS injects on load -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="section" id="problem">
+    <div class="container two-col">
+      <div>
+        <span class="eyebrow">The Problem</span>
+        <h2 style="margin:.4rem 0 0">Every case starts with a signal — most firms never see it.</h2>
+        <p class="muted">By the time a potential defense case becomes public knowledge, it’s already crowded. InjurySignals monitors fresh OSHA records and related sources so you can contact the right parties first — with context.</p>
+      </div>
+      <div>
+        <div class="price" role="note" aria-label="time-to-contact">
+          <div class="tag">Time Advantage</div>
+          <div class="num">24–72h</div>
+          <div class="muted">Typical window to initiate outreach after an incident is recorded.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Preview -->
+  <section class="section" id="product">
+    <div class="container">
+      <div style="margin-bottom:18px">
+        <span class="eyebrow">The Product</span>
+        <h2 style="margin:.4rem 0 0">Filter, rank, and act on live incidents.</h2>
+      </div>
+
+      <div class="grid cards">
+        <article class="card span-6" aria-label="Signals feed">
+          <h3>Signals Feed</h3>
+          <p>Real-time list of fresh incidents with filters for state, industry, severity, and repeat-offender status.</p>
+          <div class="frame" id="live">
+            TX • Fall Protection • <strong>3 hospitalized</strong> • Sep 28<br/>
+            AZ • Crane Collapse • <strong>1 fatality</strong> • Oct 05<br/>
+            FL • Electrical Exposure • <strong>2 injured</strong> • Oct 10
+          </div>
+        </article>
+
+        <article class="card span-6" aria-label="Company profile">
+          <h3>Company Profile</h3>
+          <p>Instant context: violations history, fines, location, and contact enrichment for targeted outreach.</p>
+          <div class="frame">
+            LEGAL_NAME: Apex Builders LLC (Dallas, TX)<br/>
+            Violations (18m): 3 • Total Fines: $87,000<br/>
+            Contact: Safety Manager (email available)
+          </div>
+        </article>
+
+        <article class="card span-4" aria-label="Weekly digest">
+          <h3>Weekly Digest Email</h3>
+          <p>Receive a concise, ranked summary per state with direct links to the highest-priority signals.</p>
+          <div class="frame">
+            Subject: “TX — 7 new potential defense leads this week”<br/>
+            Top: Fall Protection (3 hospitalized), Electrical (2 injured)
+          </div>
+        </article>
+
+        <article class="card span-4" aria-label="Prioritization">
+          <h3>Prioritization</h3>
+          <p>Severity × victim count × repeat-offender multiplier to focus on the most material cases first.</p>
+          <div class="frame">
+            Score = Base × (fatal=20, non_fatal=5, near_miss=1) × Repeat
+          </div>
+        </article>
+
+        <article class="card span-4" aria-label="Outreach">
+          <h3>Outreach</h3>
+          <p>One-click export to direct-mail + templated call scripts tailored by incident type and state.</p>
+          <div class="frame">
+            Export: PDF Dossier • CSV • Mail-merge
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Sources -->
+  <section class="section" id="sources">
+    <div class="container">
+      <div style="margin-bottom:18px">
+        <span class="eyebrow">Data Integrity</span>
+        <h2 style="margin:.4rem 0 0">Transparent sources.</h2>
+        <p class="muted">Core signals come from public records; enrichment is clearly labeled.</p>
+      </div>
+      <div class="logos" role="list">
+        <div class="logo-pill" role="listitem">OSHA Establishment Data</div>
+        <div class="logo-pill" role="listitem">State Safety Boards</div>
+        <div class="logo-pill" role="listitem">News Wires</div>
+        <div class="logo-pill" role="listitem">Court Dockets (soon)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- For Law Firms -->
+  <section class="section" id="law">
+    <div class="container two-col">
+      <div>
+        <span class="eyebrow">For Law Firms</span>
+        <h2 style="margin:.4rem 0 0">Turn signals into signed defense work.</h2>
+        <div class="grid" style="margin-top:12px; gap:16px">
+          <div class="check"><span class="box" aria-hidden="true"></span><div>Identify new opportunities by state, industry, and severity.</div></div>
+          <div class="check"><span class="box" aria-hidden="true"></span><div>Spot repeat offenders and escalation risk.</div></div>
+          <div class="check"><span class="box" aria-hidden="true"></span><div>Prioritize high-impact incidents within 24–72 hours.</div></div>
+          <div class="check"><span class="box" aria-hidden="true"></span><div>Launch templated outreach with dossier-style proofs.</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="price">
+          <div class="tag">Access</div>
+          <div class="num">$299 / month</div>
+          <div class="muted">Nationwide feed + weekly digest. Limited seats per state to preserve edge.</div>
+          <div class="stack" style="margin-top:6px">
+            <a href="#access" class="button primary">Request Access</a>
+            <a href="#demo" class="button">See a Sample Digest</a>
+          </div>
+          <div class="fine">Free 7-day trial (1 state) available on approval.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Case Flow -->
+  <section class="section" id="flow">
+    <div class="container">
+      <span class="eyebrow">How It Works</span>
+      <h2 style="margin:.4rem 0 18px">From incident to outreach — a clean path.</h2>
+      <div class="flow" aria-label="case flow">
+        <div class="node">Incident</div><div class="arrow">→</div>
+        <div class="node">Public Record</div><div class="arrow">→</div>
+        <div class="node">Signal</div><div class="arrow">→</div>
+        <div class="node">Prioritization</div><div class="arrow">→</div>
+        <div class="node">Dossier</div><div class="arrow">→</div>
+        <div class="node">Outreach</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Access Form -->
+  <section class="section" id="access" aria-labelledby="access-h">
+    <div class="container two-col">
+      <div>
+        <span class="eyebrow">Get Access</span>
+        <h2 id="access-h" style="margin:.4rem 0 0">Request a private demo.</h2>
+        <p class="muted">Tell us your firm, state focus, and website. We’ll share a live feed preview and a weekly digest sample.</p>
+      </div>
+      <form class="grid" style="gap:12px" onsubmit="event.preventDefault(); alert('Thanks — we’ll follow up shortly.');">
+        <label>
+          <span class="eyebrow">Full Name</span>
+          <input required name="name" type="text" placeholder="Jane Doe" />
+        </label>
+        <label>
+          <span class="eyebrow">Law Firm</span>
+          <input required name="firm" type="text" placeholder="Doe & Partners" />
+        </label>
+        <label>
+          <span class="eyebrow">Website</span>
+          <input required name="site" type="url" placeholder="https://examplefirm.com" />
+        </label>
+        <label>
+          <span class="eyebrow">Primary State</span>
+          <input required name="state" type="text" placeholder="TX" maxlength="2" />
+        </label>
+        <div class="stack" style="margin-top:6px">
+          <button class="button primary" type="submit">Request Demo</button>
+          <a class="button" href="#top">Back to Top</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container foot">
+      <div class="brand">
+        <span class="brand-dot" aria-hidden="true"></span>
+        InjurySignals
+      </div>
+      <small>© 2025 InjurySignals · <a class="muted" href="#sources">Data Sources</a> · <a class="muted" href="#">Privacy</a> · <a class="muted" href="#access">Contact</a></small>
+    </div>
+  </footer>
+
+  <style>
+    /* Minimal form/input styling (kept in-file for single deploy) */
+    input{
+      width:100%; height:44px; border:1px solid var(--line); border-radius:8px; padding:0 12px;
+      font-size:14px; outline:none; background:#fff; color:var(--fg);
+    }
+    input:focus{border-color:#111; box-shadow:0 0 0 3px rgba(0,0,0,.05)}
+    label{display:block}
+  </style>
+
+  <script>
+    // Lightweight ticker population (no external deps)
+    const entries = [
+      "Houston, TX — Fall Protection — 3 hospitalized — Sep 28",
+      "Phoenix, AZ — Crane Collapse — 1 fatality — Oct 05",
+      "Miami, FL — Electrical Exposure — 2 injured — Oct 10",
+      "Columbus, OH — Trench Hazard — near miss — Oct 12",
+      "San Diego, CA — Forklift Incident — 1 injured — Oct 13",
+      "Dallas, TX — Scaffolding — 3 hospitalized — Oct 14"
+    ];
+    const ticker = document.getElementById('ticker');
+    function buildTicker(){
+      const seq = entries.map(t => `<span class="tick"><span class="dot" aria-hidden="true"></span>${t}</span>`).join("");
+      // duplicate for seamless loop
+      ticker.innerHTML = seq + seq;
+    }
+    buildTicker();
+  </script>
+</body>
+</html>
