@@ -1,422 +1,260 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>InjurySignals — Find workplace injury cases before anyone else</title>
-  <meta name="description" content="Real-time intelligence on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities." />
-  <meta property="og:title" content="InjurySignals" />
-  <meta property="og:description" content="Real-time intelligence on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities." />
-  <meta property="og:type" content="website" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27black%27/%3E%3C/svg%3E">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>InjurySignals — Find workplace injury cases before anyone else</title>
+<meta name="description" content="Real-time intelligence on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27black%27/%3E%3C/svg%3E">
 
-  <style>
-    :root{
-      --bg:#ffffff;
-      --fg:#0a0a0a;
-      --muted:#6a6a6a;
-      --line:#eaeaea;
-      --accent:#000000;
-      --radius:12px;
-      --maxw:1120px;
-      --pad:20px;
-    }
+<style>
+:root{
+  --bg:#fff; --fg:#0a0a0a; --muted:#6a6a6a; --line:#eaeaea; --radius:12px; --maxw:1120px; --pad:20px;
+}
+html,body{background:var(--bg); color:var(--fg); margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+*{box-sizing:border-box} a{color:var(--fg); text-decoration:none}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad)}
+.section{padding:80px 0; border-top:1px solid var(--line)}
+.eyebrow{letter-spacing:.12em; text-transform:uppercase; font-size:.76rem; color:var(--muted)}
+.muted{color:var(--muted)}
+.button{display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 18px; border:1px solid var(--fg); border-radius:999px; font-weight:600}
+.button:hover{background:#111;color:#fff; transform:translateY(-1px)}
+.button.primary{background:#111;color:#fff}
+header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter:saturate(180%) blur(8px); border-bottom:1px solid var(--line)}
+.nav{height:64px; display:flex; align-items:center; justify-content:space-between}
+.brand{display:flex; gap:10px; align-items:center; font-weight:700}
+.brand-dot{width:10px; height:10px; background:#000; border-radius:50%}
+.hero{padding:96px 0 40px}
+.hero h1{font-size:clamp(32px,6vw,52px); line-height:1.06; letter-spacing:-.02em; margin:0 0 16px}
+.hero p{font-size:clamp(16px,2.2vw,20px); opacity:.9; max-width:720px}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
 
-    html,body{background:var(--bg); color:var(--fg); margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
-    *{box-sizing:border-box}
-    a{color:var(--fg); text-decoration:none}
-    .container{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad)}
-    .grid{display:grid; gap:20px}
-    .muted{color:var(--muted)}
-    .eyebrow{letter-spacing:.12em; text-transform:uppercase; font-size:.76rem; color:var(--muted)}
-    .section{padding:80px 0; border-top:1px solid var(--line)}
-    .button{display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 18px; border:1px solid var(--fg); border-radius:999px; font-weight:600; transition:transform .1s ease, background .15s ease}
-    .button:hover{transform:translateY(-1px); background:#111; color:#fff}
-    .button.primary{background:#111; color:#fff}
-    .button.primary:hover{transform:translateY(-1px); background:#000}
-    .subtle{opacity:.85}
+/* --- Mini Signals (full-detail cards) --- */
+#mini-signals{padding:56px 0 24px; border-top:1px solid var(--line)}
+.ms-header{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:14px}
+.ms-actions{display:flex; gap:10px; flex-wrap:wrap}
+.ms-btn{display:inline-flex; align-items:center; justify-content:center; height:40px; padding:0 14px; border:1px solid var(--fg); border-radius:999px; background:#fff; color:#0a0a0a; font-weight:600; cursor:pointer}
+.ms-btn.primary{background:#111; color:#fff}
+.ms-btn:hover{background:#111;color:#fff}
+.ms-filters{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 18px}
+.chip{border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; cursor:pointer; background:#fff}
+.chip.active{border-color:#111; background:#111; color:#fff}
 
-    header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter:saturate(180%) blur(8px); border-bottom:1px solid var(--line)}
-    .nav{height:64px; display:flex; align-items:center; justify-content:space-between}
-    .brand{display:flex; gap:10px; align-items:center; font-weight:700}
-    .brand-dot{width:10px; height:10px; background:#000; border-radius:50%}
-    .nav a{font-size:.95rem}
-    .nav-cta{display:flex; gap:10px; align-items:center}
+.ms-grid{display:grid; gap:14px}
+@media(min-width:860px){ .ms-grid{grid-template-columns:repeat(2,1fr)} }
+@media(min-width:1100px){ .ms-grid{grid-template-columns:repeat(3,1fr)} }
 
-    .hero{padding:96px 0 40px}
-    .hero h1{font-size:clamp(32px, 6vw, 52px); line-height:1.06; letter-spacing:-.02em; margin:0 0 16px}
-    .hero p{font-size:clamp(16px,2.2vw,20px); color:#111; opacity:.9; max-width:720px}
-    .hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+.ms-card{border:1px solid var(--line); border-radius:16px; padding:16px; background:#fff; display:grid; gap:10px}
+.ms-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px}
+.ms-title{font-weight:700; letter-spacing:-.01em}
+.ms-save{width:34px; height:34px; border:1px solid var(--line); border-radius:10px; display:inline-flex; align-items:center; justify-content:center; background:#fff}
+.ms-sub{display:flex; gap:12px; flex-wrap:wrap; font-size:13px; color:#6a6a6a}
+.ms-sub span{display:inline-flex; gap:6px; align-items:center}
+.ms-headline{font-weight:600}
+.ms-meta{display:grid; gap:6px; font-size:14px}
+.ms-meta .row{display:flex; gap:10px; align-items:center; color:#0a0a0a}
+.ms-meta .label{color:#6a6a6a}
+.ms-pills{display:flex; gap:8px; flex-wrap:wrap}
+.pill{border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-size:12px}
+.ms-foot{display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#6a6a6a}
+.ms-cta{display:inline-flex; align-items:center; justify-content:center; height:36px; padding:0 14px; border:1px solid #000; border-radius:999px; background:#111; color:#fff; font-weight:600}
 
-    .ticker-wrap{margin-top:28px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
-    .ticker{display:flex; gap:20px; padding:14px 18px; white-space:nowrap; animation:ticker 24s linear infinite}
-    .tick{display:inline-flex; gap:10px; align-items:center; padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:#fff}
-    .dot{width:6px; height:6px; background:#000; border-radius:50%; animation:pulse 1.6s ease-in-out infinite}
-    @keyframes ticker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
-    @keyframes pulse{0%,100%{opacity:.2} 50%{opacity:1}}
-    @media (prefers-reduced-motion: reduce){ .ticker{animation:none} .dot{animation:none} }
+.blurred{filter:blur(4px); opacity:.6; pointer-events:none; user-select:none}
+.ms-gate{margin-top:16px; border:1px dashed var(--line); border-radius:12px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff}
 
-    .cards{grid-template-columns:repeat(12,1fr)}
-    .card{grid-column:span 12; border:1px solid var(--line); border-radius:var(--radius); padding:20px; background:#fff}
-    .card h3{margin:0 0 8px; font-size:18px}
-    .card p{margin:0; color:var(--muted); font-size:14px}
-    .card .frame{margin-top:14px; border:1px dashed var(--line); border-radius:10px; padding:12px; background:#fff; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-size:13px}
-    @media (min-width:880px){ .card.span-6{grid-column:span 6} .card.span-4{grid-column:span 4} }
-
-    .logos{display:flex; gap:28px; flex-wrap:wrap; align-items:center}
-    .logo-pill{border:1px solid var(--line); border-radius:999px; padding:10px 14px; font-size:13px; color:var(--muted); background:#fff}
-
-    .two-col{display:grid; gap:28px}
-    @media (min-width:920px){ .two-col{grid-template-columns:1.2fr 1fr} }
-
-    .check{display:flex; gap:12px; align-items:flex-start}
-    .check .box{width:18px; height:18px; border:1px solid #111; border-radius:4px; display:inline-block; margin-top:3px; position:relative}
-    .check .box::after{content:""; position:absolute; inset:3px; background:#111; transform:scale(.0); transition:transform .15s ease}
-    .check:hover .box::after{transform:scale(1)}
-
-    .flow{display:flex; gap:12px; flex-wrap:wrap}
-    .flow .node{padding:10px 14px; border:1px solid var(--line); border-radius:999px; font-size:14px}
-    .flow .arrow{align-self:center; opacity:.5}
-
-    .price{border:1px solid var(--line); border-radius:var(--radius); padding:22px; display:grid; gap:8px; background:#fff}
-    .price .tag{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
-    .price .num{font-size:28px; font-weight:700}
-    .stack{display:flex; gap:8px; flex-wrap:wrap}
-    .fine{font-size:12px; color:var(--muted)}
-
-    footer{padding:60px 0; border-top:1px solid var(--line)}
-    .foot{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
-    .foot small{color:var(--muted)}
-
-    /* Mini Signals Widget (Option A) */
-    #mini-signals .grid{display:grid; gap:12px}
-    @media(min-width:860px){ #mini-signals .grid{grid-template-columns:repeat(2,1fr)}}
-    #mini-signals .card{border:1px solid var(--line); border-radius:12px; padding:14px; background:#fff}
-    #mini-signals .meta{display:flex; gap:8px; flex-wrap:wrap; color:#6a6a6a; font-size:12px}
-    #mini-signals .pill{border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-size:12px}
-    #mini-signals .btn{display:inline-flex; align-items:center; justify-content:center; height:40px; padding:0 14px; border:1px solid var(--fg); border-radius:999px; background:#fff; color:var(--fg); font-weight:600; text-decoration:none; cursor:pointer}
-    #mini-signals .btn:hover{background:#111; color:#fff}
-    #mini-signals .btn.primary{background:#111; color:#fff}
-    #mini-signals .gate{border:1px dashed var(--line); border-radius:12px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff}
-    #mini-signals .gate-cta{display:flex; gap:10px; flex-wrap:wrap}
-    #mini-signals .blurred{filter:blur(4px); opacity:.6; pointer-events:none; user-select:none}
-    #mini-signals .ey{letter-spacing:.12em; text-transform:uppercase; font-size:.72rem; color:#6a6a6a}
-    #mini-signals .title{margin:.2rem 0 .4rem; font-weight:700}
-
-    /* Inputs */
-    input{width:100%; height:44px; border:1px solid var(--line); border-radius:8px; padding:0 12px; font-size:14px; outline:none; background:#fff; color:var(--fg)}
-    input:focus{border-color:#111; box-shadow:0 0 0 3px rgba(0,0,0,.05)}
-    label{display:block}
-  </style>
+/* Utility */
+.grid{display:grid; gap:20px}
+.two-col{display:grid; gap:28px}
+@media(min-width:920px){ .two-col{grid-template-columns:1.2fr 1fr} }
+.price{border:1px solid var(--line); border-radius:12px; padding:22px; display:grid; gap:8px}
+.price .tag{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#6a6a6a}
+.price .num{font-size:28px; font-weight:700}
+input{width:100%; height:44px; border:1px solid var(--line); border-radius:8px; padding:0 12px; font-size:14px}
+input:focus{border-color:#111; box-shadow:0 0 0 3px rgba(0,0,0,.05)}
+label{display:block}
+footer{padding:60px 0; border-top:1px solid var(--line)}
+.foot{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="container nav">
-      <a class="brand" href="#">
-        <span class="brand-dot" aria-hidden="true"></span>
-        InjurySignals
-      </a>
-      <nav class="nav-cta" aria-label="primary">
-        <a href="#live" class="button subtle">View Live Signals</a>
-        <a href="#access" class="button primary">Request Access</a>
-      </nav>
-    </div>
-  </header>
+<header>
+  <div class="container nav">
+    <a class="brand" href="#"><span class="brand-dot" aria-hidden="true"></span>InjurySignals</a>
+    <nav class="nav-cta" aria-label="primary">
+      <a href="#mini-signals" class="button">Live Preview</a>
+      <a href="#access" class="button primary">Request Access</a>
+    </nav>
+  </div>
+</header>
 
-  <!-- Hero -->
-  <section class="container hero" id="top">
-    <span class="eyebrow">Legal Intelligence</span>
-    <h1>Find workplace injury cases before anyone else.</h1>
-    <p>Real-time alerts on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities. Filter by state, industry, severity, and act while the window is still open.</p>
-    <div class="hero-cta">
-      <a href="#access" class="button primary">Book a Demo</a>
-      <a href="#product" class="button">Preview the Dashboard</a>
-    </div>
+<section class="container hero" id="top">
+  <span class="eyebrow">Legal Intelligence</span>
+  <h1>Find workplace injury cases before anyone else.</h1>
+  <p>Real-time alerts on OSHA incidents, fines, and safety violations — mapped to law-firm opportunities. Filter by state, industry, and severity, and act while the window is still open.</p>
+  <div class="hero-cta">
+    <a href="#access" class="button primary">Book a Demo</a>
+    <a href="#mini-signals" class="button">Preview the Feed</a>
+  </div>
+</section>
 
-    <!-- Ticker -->
-    <div class="ticker-wrap" aria-label="recent signals">
-      <div class="ticker" id="ticker"></div>
-    </div>
-  </section>
-
-  <!-- Problem -->
-  <section class="section" id="problem">
-    <div class="container two-col">
+<!-- ▼▼ RIGHT BELOW HERO: Mini App with full-detail cards + state toggles ▼▼ -->
+<section id="mini-signals">
+  <div class="container">
+    <div class="ms-header">
       <div>
-        <span class="eyebrow">The Problem</span>
-        <h2 style="margin:.4rem 0 0">Every case starts with a signal — most firms never see it.</h2>
-        <p class="muted">By the time a potential defense case becomes public knowledge, it’s already crowded. InjurySignals monitors fresh OSHA records and related sources so you can contact the right parties first — with context.</p>
+        <div class="eyebrow">Live Preview</div>
+        <h2 style="margin:.4rem 0 0; font-size:22px; letter-spacing:-.01em;">Recent Workplace Injury Signals</h2>
+        <p class="muted" style="margin:.35rem 0 0">Showing a limited preview. Toggle states below — unlock the full statewide feed in the app.</p>
       </div>
-      <div>
-        <div class="price" role="note" aria-label="time-to-contact">
-          <div class="tag">Time Advantage</div>
-          <div class="num">24–72h</div>
-          <div class="muted">Typical window to initiate outreach after an incident is recorded.</div>
-        </div>
+      <div class="ms-actions">
+        <button id="ms-refresh" class="ms-btn">Refresh</button>
+        <a href="#access" class="ms-btn primary">Request Full Access</a>
       </div>
     </div>
-  </section>
 
-  <!-- Product Preview -->
-  <section class="section" id="product">
-    <div class="container">
-      <div style="margin-bottom:18px">
-        <span class="eyebrow">The Product</span>
-        <h2 style="margin:.4rem 0 0">Filter, rank, and act on live incidents.</h2>
-      </div>
+    <!-- State filter chips -->
+    <div id="ms-filters" class="ms-filters" role="tablist" aria-label="Filter by state"></div>
 
-      <div class="grid cards">
-        <article class="card span-6" aria-label="Signals feed">
-          <h3>Signals Feed</h3>
-          <p>Real-time list of fresh incidents with filters for state, industry, severity, and repeat-offender status.</p>
-          <div class="frame" id="live">
-            TX • Fall Protection • <strong>3 hospitalized</strong> • Sep 28<br/>
-            AZ • Crane Collapse • <strong>1 fatality</strong> • Oct 05<br/>
-            FL • Electrical Exposure • <strong>2 injured</strong> • Oct 10
-          </div>
-        </article>
+    <!-- Cards grid (3 per row on desktop) -->
+    <div id="ms-grid" class="ms-grid" aria-live="polite"></div>
 
-        <article class="card span-6" aria-label="Company profile">
-          <h3>Company Profile</h3>
-          <p>Instant context: violations history, fines, location, and contact enrichment for targeted outreach.</p>
-          <div class="frame">
-            LEGAL_NAME: Apex Builders LLC (Dallas, TX)<br/>
-            Violations (18m): 3 • Total Fines: $87,000<br/>
-            Contact: Safety Manager (email available)
-          </div>
-        </article>
-
-        <article class="card span-4" aria-label="Weekly digest">
-          <h3>Weekly Digest Email</h3>
-          <p>Receive a concise, ranked summary per state with direct links to the highest-priority signals.</p>
-          <div class="frame">
-            Subject: “TX — 7 new potential defense leads this week”<br/>
-            Top: Fall Protection (3 hospitalized), Electrical (2 injured)
-          </div>
-        </article>
-
-        <article class="card span-4" aria-label="Prioritization">
-          <h3>Prioritization</h3>
-          <p>Severity × victim count × repeat-offender multiplier to focus on the most material cases first.</p>
-          <div class="frame">
-            Score = Base × (fatal=20, non_fatal=5, near_miss=1) × Repeat
-          </div>
-        </article>
-
-        <article class="card span-4" aria-label="Outreach">
-          <h3>Outreach</h3>
-          <p>One-click export to direct-mail + templated call scripts tailored by incident type and state.</p>
-          <div class="frame">
-            Export: PDF Dossier • CSV • Mail-merge
-          </div>
-        </article>
+    <!-- Gate -->
+    <div id="ms-gate" class="ms-gate" style="display:none">
+      <strong>Upgrade to see all signals in your selected state.</strong>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="#access" class="ms-btn primary">Unlock Full Feed</a>
+        <a href="#demo" class="ms-btn">See Sample Digest</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+<!-- ▲▲ END Mini App ▲▲ -->
 
-  <!-- Mini Signals Widget (combined Option A) -->
-  <section id="mini-signals" class="section" style="padding:40px 0;">
-    <div class="container">
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px">
-        <div>
-          <div class="eyebrow">Live Preview</div>
-          <h2 style="margin:.4rem 0 0;font-size:22px;letter-spacing:-.01em">Recent Workplace Injury Signals</h2>
-          <p class="muted" style="margin:.4rem 0 0">Showing a limited preview. Upgrade to unlock the full statewide feed.</p>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button id="mini-refresh" class="btn">Refresh</button>
-          <a href="#access" class="btn primary">Request Full Access</a>
-        </div>
-      </div>
-
-      <div id="signals-grid" class="grid"></div>
-
-      <div id="gate" style="margin-top:16px;display:none">
-        <div class="gate">
-          <strong>Upgrade to see all signals in your state.</strong>
-          <div class="gate-cta">
-            <a href="#access" class="btn primary">Unlock Full Feed</a>
-            <a href="#demo" class="btn">See Sample Digest</a>
-          </div>
-        </div>
-      </div>
+<!-- (You can keep the rest of your sections here… pricing, how it works, access form, footer) -->
+<section class="section" id="access" aria-labelledby="access-h">
+  <div class="container two-col">
+    <div>
+      <span class="eyebrow">Get Access</span>
+      <h2 id="access-h" style="margin:.4rem 0 0">Request a private demo.</h2>
+      <p class="muted">Tell us your firm, state focus, and website. We’ll share a live feed preview and a weekly digest sample.</p>
     </div>
-  </section>
+    <form class="grid" style="gap:12px" onsubmit="event.preventDefault(); alert('Thanks — we’ll follow up shortly.');">
+      <label><span class="eyebrow">Full Name</span><input required name="name" type="text" placeholder="Jane Doe"/></label>
+      <label><span class="eyebrow">Law Firm</span><input required name="firm" type="text" placeholder="Doe & Partners"/></label>
+      <label><span class="eyebrow">Website</span><input required name="site" type="url" placeholder="https://examplefirm.com"/></label>
+      <label><span class="eyebrow">Primary State</span><input required name="state" type="text" placeholder="TX" maxlength="2"/></label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="button primary" type="submit">Request Demo</button>
+        <a class="button" href="#top">Back to Top</a>
+      </div>
+    </form>
+  </div>
+</section>
 
-  <!-- Data Sources -->
-  <section class="section" id="sources">
-    <div class="container">
-      <div style="margin-bottom:18px">
-        <span class="eyebrow">Data Integrity</span>
-        <h2 style="margin:.4rem 0 0">Transparent sources.</h2>
-        <p class="muted">Core signals come from public records; enrichment is clearly labeled.</p>
-      </div>
-      <div class="logos" role="list">
-        <div class="logo-pill" role="listitem">OSHA Establishment Data</div>
-        <div class="logo-pill" role="listitem">State Safety Boards</div>
-        <div class="logo-pill" role="listitem">News Wires</div>
-        <div class="logo-pill" role="listitem">Court Dockets (soon)</div>
-      </div>
+<footer>
+  <div class="container foot">
+    <div class="brand"><span class="brand-dot" aria-hidden="true"></span>InjurySignals</div>
+    <small class="muted">© 2025 InjurySignals · <a href="#access">Contact</a></small>
+  </div>
+</footer>
+
+<script>
+/* ---- Mock dataset with full details ---- */
+const MOCK = [
+  {company:"Evergreen Freight", industry:"Logistics", city:"Midland", state:"TX",
+   headline:"Employee hospitalized following toxic chemical exposure",
+   status:"No Counsel Yet", caseRange:"$75K–$150K", victimsCat:"non_fatal", victimsText:"1 hospitalized",
+   ageDays:22, repeat:true},
+
+  {company:"Apex Builders LLC", industry:"Construction", city:"Dallas", state:"TX",
+   headline:"Scaffolding collapse injures multiple workers",
+   status:"No Counsel Yet", caseRange:"$120K–$250K", victimsCat:"non_fatal", victimsText:"3 hospitalized",
+   ageDays:1, repeat:true},
+
+  {company:"Sun Valley Crane Co.", industry:"Heavy Equipment", city:"Phoenix", state:"AZ",
+   headline:"Crane collapse at jobsite — 1 fatality",
+   status:"Unknown", caseRange:"$500K–$1.2M", victimsCat:"fatal", victimsText:"1 fatality",
+   ageDays:10, repeat:false},
+
+  {company:"Seabreeze Electric", industry:"Electrical", city:"Miami", state:"FL",
+   headline:"Arc flash incident causes burn injuries",
+   status:"Counsel Identified", caseRange:"$90K–$180K", victimsCat:"non_fatal", victimsText:"2 injured",
+   ageDays:5, repeat:false},
+
+  {company:"Heartland Trenching", industry:"Utilities", city:"Columbus", state:"OH",
+   headline:"Trench wall failure narrowly avoided",
+   status:"No Counsel Yet", caseRange:"$0–$25K", victimsCat:"near_miss", victimsText:"near miss",
+   ageDays:3, repeat:true},
+
+  {company:"Pacific Warehousing", industry:"Logistics", city:"San Diego", state:"CA",
+   headline:"Forklift struck pedestrian in loading zone",
+   status:"No Counsel Yet", caseRange:"$60K–$120K", victimsCat:"non_fatal", victimsText:"1 injured",
+   ageDays:2, repeat:false},
+
+  {company:"Allegheny Steelworks", industry:"Manufacturing", city:"Pittsburgh", state:"PA",
+   headline:"Lockout/Tagout failure led to crush injury",
+   status:"Unknown", caseRange:"$110K–$220K", victimsCat:"non_fatal", victimsText:"1 injured",
+   ageDays:1, repeat:false},
+
+  {company:"Lakefront Roofing", industry:"Construction", city:"Chicago", state:"IL",
+   headline:"Fall protection breach — hospitalized worker",
+   status:"No Counsel Yet", caseRange:"$80K–$160K", victimsCat:"non_fatal", victimsText:"2 hospitalized",
+   ageDays:0, repeat:true}
+];
+
+const STATES = ["All","TX","AZ","FL","OH","CA","PA","IL"];
+const LIMIT = 6; // show 6, blur the rest
+
+/* ---- DOM ---- */
+const grid = document.getElementById('ms-grid');
+const gate = document.getElementById('ms-gate');
+const refreshBtn = document.getElementById('ms-refresh');
+const filtersWrap = document.getElementById('ms-filters');
+
+/* ---- Helpers ---- */
+function chipHTML(code){ return `<button class="chip" data-state="${code}">${code}</button>` }
+function ageLabel(days){ return days===0?"today":(days===1?"1 day":"\u00A0" + days+" days") }
+function victimsPill(v){ return `<span class="pill">${v}</span>` }
+function repeatPill(r){ return r?`<span class="pill">Repeat Offender</span>`:"" }
+function cardHTML(s, blurred=false){
+  return `
+  <article class="ms-card ${blurred?'blurred':''}">
+    <div class="ms-top">
+      <div class="ms-title">${s.company}</div>
+      <button class="ms-save" aria-label="save"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 21l6-4 6 4V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16z" stroke="#0a0a0a"/></svg></button>
     </div>
-  </section>
-
-  <!-- For Law Firms -->
-  <section class="section" id="law">
-    <div class="container two-col">
-      <div>
-        <span class="eyebrow">For Law Firms</span>
-        <h2 style="margin:.4rem 0 0">Turn signals into signed defense work.</h2>
-        <div class="grid" style="margin-top:12px; gap:16px">
-          <div class="check"><span class="box" aria-hidden="true"></span><div>Identify new opportunities by state, industry, and severity.</div></div>
-          <div class="check"><span class="box" aria-hidden="true"></span><div>Spot repeat offenders and escalation risk.</div></div>
-          <div class="check"><span class="box" aria-hidden="true"></span><div>Prioritize high-impact incidents within 24–72 hours.</div></div>
-          <div class="check"><span class="box" aria-hidden="true"></span><div>Launch templated outreach with dossier-style proofs.</div></div>
-        </div>
-      </div>
-      <div>
-        <div class="price">
-          <div class="tag">Access</div>
-          <div class="num">$299 / month</div>
-          <div class="muted">Nationwide feed + weekly digest. Limited seats per state to preserve edge.</div>
-          <div class="stack" style="margin-top:6px">
-            <a href="#access" class="button primary">Request Access</a>
-            <a href="#demo" class="button">See a Sample Digest</a>
-          </div>
-          <div class="fine">Free 7-day trial (1 state) available on approval.</div>
-        </div>
-      </div>
+    <div class="ms-sub">
+      <span>🏭 ${s.industry}</span>
+      <span>📍 ${s.city}, ${s.state}</span>
     </div>
-  </section>
-
-  <!-- Case Flow -->
-  <section class="section" id="flow">
-    <div class="container">
-      <span class="eyebrow">How It Works</span>
-      <h2 style="margin:.4rem 0 18px">From incident to outreach — a clean path.</h2>
-      <div class="flow" aria-label="case flow">
-        <div class="node">Incident</div><div class="arrow">→</div>
-        <div class="node">Public Record</div><div class="arrow">→</div>
-        <div class="node">Signal</div><div class="arrow">→</div>
-        <div class="node">Prioritization</div><div class="arrow">→</div>
-        <div class="node">Dossier</div><div class="arrow">→</div>
-        <div class="node">Outreach</div>
-      </div>
+    <div class="ms-headline">${s.headline}</div>
+    <div class="ms-meta">
+      <div class="row"><span class="label">Status:</span> ${s.status}</div>
+      <div class="row"><span class="label">Case Range:</span> ${s.caseRange}</div>
+      <div class="row"><span class="label">Potential Victims:</span> ${s.victimsCat.replace('_','-')}</div>
+      <div class="ms-pills">${victimsPill(s.victimsText)} ${repeatPill(s.repeat)}</div>
     </div>
-  </section>
-
-  <!-- Access Form -->
-  <section class="section" id="access" aria-labelledby="access-h">
-    <div class="container two-col">
-      <div>
-        <span class="eyebrow">Get Access</span>
-        <h2 id="access-h" style="margin:.4rem 0 0">Request a private demo.</h2>
-        <p class="muted">Tell us your firm, state focus, and website. We’ll share a live feed preview and a weekly digest sample.</p>
-      </div>
-      <form class="grid" style="gap:12px" onsubmit="event.preventDefault(); alert('Thanks — we’ll follow up shortly.');">
-        <label>
-          <span class="eyebrow">Full Name</span>
-          <input required name="name" type="text" placeholder="Jane Doe" />
-        </label>
-        <label>
-          <span class="eyebrow">Law Firm</span>
-          <input required name="firm" type="text" placeholder="Doe & Partners" />
-        </label>
-        <label>
-          <span class="eyebrow">Website</span>
-          <input required name="site" type="url" placeholder="https://examplefirm.com" />
-        </label>
-        <label>
-          <span class="eyebrow">Primary State</span>
-          <input required name="state" type="text" placeholder="TX" maxlength="2" />
-        </label>
-        <div class="stack" style="margin-top:6px">
-          <button class="button primary" type="submit">Request Demo</button>
-          <a class="button" href="#top">Back to Top</a>
-        </div>
-      </form>
+    <div class="ms-foot">
+      <span>🗓️ ${ageLabel(s.ageDays)}</span>
+      <a href="#access" class="ms-cta">View Case</a>
     </div>
-  </section>
+  </article>`;
+}
 
-  <!-- Footer -->
-  <footer>
-    <div class="container foot">
-      <div class="brand">
-        <span class="brand-dot" aria-hidden="true"></span>
-        InjurySignals
-      </div>
-      <small>© 2025 InjurySignals · <a class="muted" href="#sources">Data Sources</a> · <a class="muted" href="#">Privacy</a> · <a class="muted" href="#access">Contact</a></small>
-    </div>
-  </footer>
+function render(data){
+  grid.innerHTML = "";
+  const visible = data.slice(0, LIMIT);
+  const hidden  = data.slice(LIMIT);
+  visible.forEach(s => grid.insertAdjacentHTML('beforeend', cardHTML(s,false)));
+  hidden.forEach(s  => grid.insertAdjacentHTML('beforeend', cardHTML(s,true)));
+  gate.style.display = hidden.length ? 'flex' : 'none';
+}
 
-  <script>
-    // Header ticker population
-    const entries = [
-      "Houston, TX — Fall Protection — 3 hospitalized — Sep 28",
-      "Phoenix, AZ — Crane Collapse — 1 fatality — Oct 05",
-      "Miami, FL — Electrical Exposure — 2 injured — Oct 10",
-      "Columbus, OH — Trench Hazard — near miss — Oct 12",
-      "San Diego, CA — Forklift Incident — 1 injured — Oct 13",
-      "Dallas, TX — Scaffolding — 3 hospitalized — Oct 14"
-    ];
-    const ticker = document.getElementById('ticker');
-    function buildTicker(){
-      const seq = entries.map(t => `<span class="tick"><span class="dot" aria-hidden="true"></span>${t}</span>`).join("");
-      ticker.innerHTML = seq + seq; // duplicate for seamless loop
-    }
-    buildTicker();
+function shuffle(arr){
+  const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]} return a;
+}
 
-    // Mini Signals Widget (Option A logic)
-    const MOCK_SIGNALS = [
-      {state:"TX", city:"Houston", type:"Fall Protection", victims:"3 hospitalized", date:"2025-09-28", repeat:true},
-      {state:"AZ", city:"Phoenix", type:"Crane Collapse", victims:"1 fatality", date:"2025-10-05", repeat:false},
-      {state:"FL", city:"Miami", type:"Electrical Exposure", victims:"2 injured", date:"2025-10-10", repeat:false},
-      {state:"OH", city:"Columbus", type:"Trench Hazard", victims:"near miss", date:"2025-10-12", repeat:true},
-      {state:"CA", city:"San Diego", type:"Forklift Incident", victims:"1 injured", date:"2025-10-13", repeat:false},
-      {state:"TX", city:"Dallas", type:"Scaffolding", victims:"3 hospitalized", date:"2025-10-14", repeat:true},
-      {state:"PA", city:"Pittsburgh", type:"Lockout/Tagout", victims:"1 injured", date:"2025-10-14", repeat:false},
-      {state:"IL", city:"Chicago", type:"Fall Protection", victims:"2 hospitalized", date:"2025-10-15", repeat:true}
-    ];
-    const LIMIT = 6;
-    const grid = document.getElementById('signals-grid');
-    const gate = document.getElementById('gate');
-    const refreshBtn = document.getElementById('mini-refresh');
-
-    function cardHTML(s, blurred=false){
-      return `
-        <article class="card ${blurred?'blurred':''}" aria-label="signal">
-          <div class="ey">${s.state} • ${s.city} • ${s.date}</div>
-          <div class="title">${s.type}</div>
-          <div class="meta">
-            <span class="pill">${s.victims}</span>
-            ${s.repeat?'<span class="pill">Repeat Offender</span>':''}
-          </div>
-        </article>
-      `;
-    }
-
-    function render(data){
-      grid.innerHTML = "";
-      const visible = data.slice(0, LIMIT);
-      const hidden  = data.slice(LIMIT);
-
-      visible.forEach(s => grid.insertAdjacentHTML('beforeend', cardHTML(s,false)));
-      hidden.forEach(s  => grid.insertAdjacentHTML('beforeend', cardHTML(s,true)));
-
-      gate.style.display = hidden.length ? 'block' : 'none';
-    }
-
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];
-      }
-      return arr;
-    }
-
-    // Initial render
-    render(MOCK_SIGNALS);
-    refreshBtn.addEventListener('click', ()=> render(shuffle([...MOCK_SIGNALS])));
-  </script>
-</body>
-</html>
+function stateFiltered(state){
+  if(state==="All") return [...MOCK];
+  return MOCK.filter(s => s.stat
